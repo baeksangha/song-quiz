@@ -1,0 +1,151 @@
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: #f7f7fa;
+  margin: 0;
+  padding: 0;
+}
+
+.room-form-container, .lobby-container, .game-container, .result-container {
+  max-width: 420px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  padding: 32px 24px 24px 24px;
+  text-align: center;
+}
+
+.room-form input, .answer-form input {
+  width: 90%;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.room-form-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin: 12px 0 0 0;
+}
+.room-form-buttons button {
+  flex: 1;
+  margin: 0 4px;
+  padding: 10px 0;
+  border: none;
+  border-radius: 6px;
+  background: #e0e0e0;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.room-form-buttons button.active, .start-btn {
+  background: #4f8cff;
+  color: #fff;
+}
+.room-form-buttons button:hover, .start-btn:hover, .to-lobby-btn:hover {
+  background: #2563eb;
+  color: #fff;
+}
+
+.error-msg {
+  color: #e53e3e;
+  margin-top: 10px;
+}
+
+.player-list {
+  margin: 18px 0 10px 0;
+}
+.player-list table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+.player-list th, .player-list td {
+  border: 1px solid #e0e0e0;
+  padding: 6px 0;
+  font-size: 1rem;
+}
+.player-list th {
+  background: #f0f4fa;
+}
+
+.start-btn, .to-lobby-btn {
+  width: 100%;
+  padding: 12px 0;
+  margin-top: 18px;
+  border: none;
+  border-radius: 6px;
+  background: #4f8cff;
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.wait-msg {
+  margin-top: 18px;
+  color: #888;
+}
+
+.game-container audio {
+  width: 100%;
+  margin: 18px 0 10px 0;
+}
+.answer-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.answer-form input {
+  flex: 1;
+}
+.answer-form button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  background: #4f8cff;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.timer {
+  font-size: 1.1rem;
+  margin: 10px 0;
+  color: #2563eb;
+}
+.hint {
+  margin: 10px 0;
+  color: #eab308;
+  font-weight: bold;
+}
+.reveal {
+  margin: 10px 0;
+  color: #e53e3e;
+  font-weight: bold;
+}
+.result-container .winner {
+  font-size: 1.2rem;
+  margin: 18px 0 10px 0;
+  color: #2563eb;
+  font-weight: bold;
+} 
+
+.submit-button {
+  width: 100%;
+  padding: 12px 0;
+  margin-top: 18px;
+  border: none;
+  border-radius: 6px;
+  background: #4f8cff;
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.submit-button:hover {
+  background: #2563eb;
+} 
