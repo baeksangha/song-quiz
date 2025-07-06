@@ -1,0 +1,21 @@
+{
+  "name": "song-quiz-backend",
+  "version": "1.0.0",
+  "description": "Song Quiz Game Backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.14.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["websocket", "game", "quiz"],
+  "author": "",
+  "license": "MIT"
+} 
