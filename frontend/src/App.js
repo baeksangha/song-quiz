@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AppProvider, useAppContext } from "./context/AppContext";
 import useSocket from "./hooks/useSocket";
 import RoomForm from "./components/RoomForm";

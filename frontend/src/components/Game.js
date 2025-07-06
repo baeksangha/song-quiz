@@ -3,13 +3,9 @@ import { useAppContext } from "../context/AppContext";
 import PlayerList from "./PlayerList";
 import YouTube from "react-youtube";
 
-function isYouTubeUrl(url) {
-  return /youtube\.com|youtu\.be/.test(url);
-}
-
 function extractYouTubeId(url) {
   if (!url) return null;
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const match = url.match(regExp);
   return match && match[2].length === 11 ? match[2] : null;
 }
@@ -59,13 +55,13 @@ export default function Game() {
       setTime((t) => (t > 0 ? t - 1 : 0));
     }, 1000);
     return () => clearInterval(timer);
-  }, [gameState?.index]);
+  }, [gameState?.index]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 힌트/정답 공개 처리
   useEffect(() => {
     if (gameState?.hint) setHint(gameState.hint);
     if (gameState?.reveal) setReveal(true);
-  }, [gameState?.hint, gameState?.reveal]);
+  }, [gameState]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
