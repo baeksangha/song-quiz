@@ -12,7 +12,12 @@ class GameManager {
   }
 
   addPlayer(socketId, name) {
-    this.players[socketId] = { name, score: 0 };
+    // 기존 플레이어가 있는 경우 점수 유지
+    const existingPlayer = this.players[socketId];
+    this.players[socketId] = {
+      name,
+      score: existingPlayer ? existingPlayer.score : 0
+    };
   }
 
   removePlayer(socketId) {
@@ -21,6 +26,12 @@ class GameManager {
 
   getCurrentSong() {
     return songs[this.currentSongIndex];
+  }
+
+  nextSong() {
+    this.currentSongIndex++;
+    this.isAnswering = false;
+    this.hintGiven = false;
   }
 
   checkAnswer(answer) {
@@ -82,19 +93,23 @@ class GameManager {
     return false;
   }
 
-  nextSong() {
-    this.currentSongIndex++;
-    this.hintGiven = false;
-    this.isAnswering = false;
-  }
-
   resetGame() {
     this.currentSongIndex = 0;
     this.hintGiven = false;
     this.isAnswering = false;
-    for (const id in this.players) {
-      this.players[id].score = 0;
+    // 점수 초기화는 RoomManager에서 처리
+  }
+
+  getPlayerScore(socketId) {
+    return this.players[socketId]?.score || 0;
+  }
+
+  updatePlayerScore(socketId) {
+    if (this.players[socketId]) {
+      this.players[socketId].score = (this.players[socketId].score || 0) + 1;
+      return true;
     }
+    return false;
   }
 }
 

@@ -46,9 +46,11 @@ export default function useSocket(dispatch) {
           stableDispatch({ type: "UPDATE_GAME_STATE", gameState: { reveal: true, answer: payload.answer } });
       } else if (type === "score_update") {
           stableDispatch({ type: "SET_PLAYERS", players: payload.players });
-        // 정답자/정답 정보는 gameState에 추가로 저장 가능
       } else if (type === "game_end") {
+          console.log("게임 종료:", payload);
+          stableDispatch({ type: "SET_PLAYERS", players: payload.players });
           stableDispatch({ type: "SET_WINNERS", winners: payload.winners });
+          stableDispatch({ type: "SET_PAGE", page: "result" });
       }
     };
 

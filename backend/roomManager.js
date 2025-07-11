@@ -26,29 +26,41 @@ class RoomManager {
     return { success: true, room, started: room.started };
   }
 
+  getRoom(roomCode) {
+    return this.rooms[roomCode];
+  }
+
   addPlayer(roomCode, socketId, name) {
     const room = this.rooms[roomCode];
     if (!room) return false;
-    room.players[socketId] = { name, score: 0 };
+    
+    // 기존 플레이어가 있는 경우 점수 유지
+    const existingPlayer = room.players[socketId];
+    room.players[socketId] = {
+      name,
+      score: existingPlayer ? existingPlayer.score : 0
+    };
+    
+    // 게임 매니저에도 플레이어 추가
+    room.game.addPlayer(socketId, name);
     return true;
   }
 
   removePlayer(roomCode, socketId) {
     const room = this.rooms[roomCode];
-    if (!room) return;
+    if (!room) return false;
     delete room.players[socketId];
-    // 방장이 나가면 방 삭제(간단화)
-    if (room.hostId === socketId) delete this.rooms[roomCode];
-  }
-
-  getRoom(roomCode) {
-    return this.rooms[roomCode];
+    room.game.removePlayer(socketId);
+    return true;
   }
 
   getPlayers(roomCode) {
     const room = this.rooms[roomCode];
     if (!room) return [];
-    return Object.values(room.players);
+    return Object.entries(room.players).map(([id, player]) => ({
+      name: player.name,
+      score: player.score || 0
+    }));
   }
 
   startGame(roomCode) {
@@ -56,7 +68,26 @@ class RoomManager {
     if (!room) return false;
     room.started = true;
     room.game.resetGame();
+    // 모든 플레이어의 점수를 0으로 초기화
+    Object.keys(room.players).forEach(socketId => {
+      room.players[socketId].score = 0;
+    });
     return true;
+  }
+
+  updatePlayerScore(roomCode, socketId) {
+    const room = this.rooms[roomCode];
+    if (!room || !room.players[socketId]) return false;
+    
+    // 플레이어 점수 증가
+    room.players[socketId].score = (room.players[socketId].score || 0) + 1;
+    return true;
+  }
+
+  getPlayerScore(roomCode, socketId) {
+    const room = this.rooms[roomCode];
+    if (!room || !room.players[socketId]) return 0;
+    return room.players[socketId].score || 0;
   }
 
   updateGameState(roomCode, gameState) {
@@ -77,4 +108,4 @@ class RoomManager {
   }
 }
 
-module.exports = new RoomManager();
+module.exports = RoomManager;

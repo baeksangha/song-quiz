@@ -4,7 +4,7 @@ const cors = require('cors');
 const WebSocket = require('ws');
 const path = require('path');
 const fs = require('fs');
-const roomManager = require('./roomManager');
+const RoomManager = require('./roomManager');
 const songs = require('./songs');
 
 const app = express();
@@ -61,6 +61,9 @@ app.get('/stream/:filename', (req, res) => {
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
+// RoomManager 인스턴스 생성
+const roomManager = new RoomManager();
+
 // 소켓ID <-> 방코드 매핑
 const socketRoomMap = {};
 
@@ -97,7 +100,8 @@ wss.on('connection', (ws) => {
     try { data = JSON.parse(msg); } catch { return; }
     const { type, payload } = data;
     console.log('받은 메시지:', data);
-    console.log('받은 메시지:', { type, payload });
+    // 중복 로그 제거
+    
     // 방 생성
     if (type === 'create_room') {
       console.log('방 생성 요청:', payload);
@@ -157,7 +161,7 @@ wss.on('connection', (ws) => {
       startSong(roomCode);
     }
 
-    // 정답 제출
+    // 정답 제출 처리 부분 수정
     else if (type === 'submit_answer') {
       const { answer } = payload;
       const roomCode = ws.roomCode;
@@ -167,13 +171,15 @@ wss.on('connection', (ws) => {
       
       // 서버 게임 상태 확인
       const serverGameState = getRoomGameState(roomCode);
-      if (!serverGameState || serverGameState.isAnswering) return; // 이미 정답자 있음
+      if (!serverGameState || serverGameState.isAnswering) return;
       
       if (game.checkAnswer(answer)) {
         // 서버 게임 상태 업데이트
         serverGameState.isAnswering = true;
         serverGameState.phase = 'correct';
-        room.players[ws._socket.remotePort].score += 1;
+        
+        // 점수 업데이트
+        roomManager.updatePlayerScore(roomCode, ws._socket.remotePort);
         
         // 서버 타이머 정리
         if (room.serverTimer) {
@@ -188,6 +194,14 @@ wss.on('connection', (ws) => {
             ...serverGameState,
             correctPlayer: room.players[ws._socket.remotePort].name,
             correctAnswer: game.getCurrentSong().title
+          }
+        });
+        
+        // 플레이어 점수 업데이트 브로드캐스트
+        broadcastToRoom(roomCode, {
+          type: 'score_update',
+          payload: {
+            players: roomManager.getPlayers(roomCode)
           }
         });
         
@@ -357,10 +371,21 @@ function endGame(roomCode) {
     room.serverTimer = null;
   }
   
+  // 최종 플레이어 점수 정보 가져오기
   const players = roomManager.getPlayers(roomCode);
+  
+  // 승자 계산
   const maxScore = Math.max(...players.map(p => p.score));
   const winners = players.filter(p => p.score === maxScore);
-  broadcastToRoom(roomCode, { type: 'game_end', payload: { players, winners } });
+  
+  // 게임 종료 메시지 전송
+  broadcastToRoom(roomCode, { 
+    type: 'game_end', 
+    payload: { 
+      players: players,
+      winners: winners 
+    } 
+  });
   
   // 서버 게임 상태 정리
   delete roomGameStates[roomCode];
