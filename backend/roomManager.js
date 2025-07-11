@@ -2,7 +2,7 @@ const GameManager = require('./gameManager');
 
 class RoomManager {
   constructor() {
-    this.rooms = {}; // { roomCode: { password, players: {socketId: {name, score}}, hostId, game: GameManager, started: false } }
+    this.rooms = {}; // { roomCode: { password, players: {socketId: {name, score}}, hostId, game: GameManager, started: false, currentGameState: null } }
   }
 
   createRoom(roomCode, password, hostId) {
@@ -12,7 +12,8 @@ class RoomManager {
       players: {},
       hostId,
       game: new GameManager(),
-      started: false
+      started: false,
+      currentGameState: null
     };
     return true;
   }
@@ -56,6 +57,19 @@ class RoomManager {
     room.started = true;
     room.game.resetGame();
     return true;
+  }
+
+  updateGameState(roomCode, gameState) {
+    const room = this.rooms[roomCode];
+    if (!room) return false;
+    room.currentGameState = gameState;
+    return true;
+  }
+
+  getCurrentGameState(roomCode) {
+    const room = this.rooms[roomCode];
+    if (!room) return null;
+    return room.currentGameState;
   }
 
   deleteRoom(roomCode) {

@@ -36,7 +36,7 @@ export default function useSocket(dispatch) {
           stableDispatch({ type: "SET_ERROR", error: payload.error });
       } else if (type === "update_players") {
           stableDispatch({ type: "SET_PLAYERS", players: payload.players });
-        } else if (type === "game_state") {
+        } else if (type === "server_game_state") {
           stableDispatch({ type: "SET_GAME_STATE", gameState: payload });
       } else if (type === "hint") {
           // 기존 gameState를 유지하면서 hint만 추가
