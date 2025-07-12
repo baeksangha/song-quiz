@@ -1,5 +1,5 @@
 // 게임 상태 및 로직 관리
-const songs = require('./songs');
+const { getSongsBySet } = require('./songs');
 
 class GameManager {
   constructor() {
@@ -9,6 +9,10 @@ class GameManager {
     this.isAnswering = false;
     this.timer = null;
     this.hintGiven = false;
+    this.songs = []; // 선택된 세트의 노래들
+    this.selectedSetId = null;
+    this.questionCount = 10; // 기본값
+    this.gamePhase = 'waiting'; // waiting, selecting, countdown, playing, finished
   }
 
   addPlayer(socketId, name) {
@@ -24,14 +28,48 @@ class GameManager {
     delete this.players[socketId];
   }
 
+  // 게임 설정 (세트와 문제 수 선택)
+  setGameConfig(setId, questionCount) {
+    this.selectedSetId = setId;
+    this.questionCount = questionCount;
+    this.songs = getSongsBySet(setId);
+    if (!this.songs) {
+      throw new Error('Invalid song set');
+    }
+    this.gamePhase = 'selecting';
+  }
+
+  // 게임 시작 준비
+  prepareGame() {
+    this.gamePhase = 'countdown';
+    this.currentSongIndex = 0;
+    this.isAnswering = false;
+    this.hintGiven = false;
+    // 모든 플레이어의 점수를 0으로 초기화
+    Object.keys(this.players).forEach(socketId => {
+      this.players[socketId].score = 0;
+    });
+  }
+
+  // 게임 시작
+  startGame() {
+    this.gamePhase = 'playing';
+  }
+
   getCurrentSong() {
-    return songs[this.currentSongIndex];
+    if (!this.songs || this.currentSongIndex >= this.songs.length) return null;
+    return this.songs[this.currentSongIndex];
   }
 
   nextSong() {
     this.currentSongIndex++;
     this.isAnswering = false;
     this.hintGiven = false;
+    
+    // 게임 종료 체크
+    if (this.currentSongIndex >= this.questionCount || this.currentSongIndex >= this.songs.length) {
+      this.gamePhase = 'finished';
+    }
   }
 
   checkAnswer(answer) {
@@ -57,7 +95,7 @@ class GameManager {
       'blue moon': '블루문',
       'ah yeah': '아예',
       'kill this love': '킬디스러브',
-      'yes or yes': '예스오어예스',
+      'yes or yes': '예스올예스',
       'latata': '라타타',
       'idol': '아이돌',
       'likey': '라이키',
@@ -97,6 +135,7 @@ class GameManager {
     this.currentSongIndex = 0;
     this.hintGiven = false;
     this.isAnswering = false;
+    this.gamePhase = 'waiting';
     // 점수 초기화는 RoomManager에서 처리
   }
 
@@ -110,6 +149,17 @@ class GameManager {
       return true;
     }
     return false;
+  }
+
+  // 게임 상태 정보 가져오기
+  getGameState() {
+    return {
+      phase: this.gamePhase,
+      currentSongIndex: this.currentSongIndex,
+      questionCount: this.questionCount,
+      selectedSetId: this.selectedSetId,
+      totalSongs: this.songs.length
+    };
   }
 }
 

@@ -63,15 +63,36 @@ class RoomManager {
     }));
   }
 
+  // 게임 설정 (방장만 호출 가능)
+  setGameConfig(roomCode, setId, questionCount) {
+    const room = this.rooms[roomCode];
+    if (!room) return false;
+    
+    try {
+      room.game.setGameConfig(setId, questionCount);
+      return true;
+    } catch (error) {
+      console.error('게임 설정 실패:', error);
+      return false;
+    }
+  }
+
+  // 게임 시작 준비 (방장만 호출 가능)
+  prepareGame(roomCode) {
+    const room = this.rooms[roomCode];
+    if (!room) return false;
+    
+    room.game.prepareGame();
+    return true;
+  }
+
+  // 게임 시작 (방장만 호출 가능)
   startGame(roomCode) {
     const room = this.rooms[roomCode];
     if (!room) return false;
+    
     room.started = true;
-    room.game.resetGame();
-    // 모든 플레이어의 점수를 0으로 초기화
-    Object.keys(room.players).forEach(socketId => {
-      room.players[socketId].score = 0;
-    });
+    room.game.startGame();
     return true;
   }
 
@@ -101,6 +122,13 @@ class RoomManager {
     const room = this.rooms[roomCode];
     if (!room) return null;
     return room.currentGameState;
+  }
+
+  // 게임 매니저의 게임 상태 가져오기
+  getGameManagerState(roomCode) {
+    const room = this.rooms[roomCode];
+    if (!room) return null;
+    return room.game.getGameState();
   }
 
   deleteRoom(roomCode) {

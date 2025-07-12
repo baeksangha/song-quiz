@@ -13,6 +13,8 @@ const initialState = {
 };
 
 function reducer(state, action) {
+  console.log("[AppContext] 액션:", action.type, "페이로드:", action.payload, "현재 상태:", state);
+  
   switch (action.type) {
     case "SET_SOCKET":
       return { ...state, socket: action.socket };
@@ -27,7 +29,8 @@ function reducer(state, action) {
     case "UPDATE_GAME_STATE":
       return { ...state, gameState: { ...state.gameState, ...action.gameState }, page: "game" };
     case "SET_PAGE":
-      return { ...state, page: action.page, error: action.page === "room" ? null : state.error };
+      console.log("[AppContext] SET_PAGE 액션 처리 - 새로운 페이지:", action.payload);
+      return { ...state, page: action.payload, error: action.payload === "room" ? null : state.error };
     case "SET_ERROR":
       return { ...state, error: action.error };
     case "SET_WINNERS":
@@ -43,6 +46,7 @@ function reducer(state, action) {
         socket: state.socket, // 소켓만 유지
       };
     default:
+      console.log("[AppContext] 알 수 없는 액션:", action.type);
       return state;
   }
 }

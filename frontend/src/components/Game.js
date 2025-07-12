@@ -16,12 +16,11 @@ function extractStartFromUrl(url) {
   return match ? parseInt(match[1], 10) : 0;
 }
 
-const MemoYouTube = memo(function MemoYouTube({ videoId, start, onReady, onStateChange, audioUrl, shouldPlay }) {
+const MemoYouTube = memo(function MemoYouTube({ videoId, start, onReady, onStateChange, shouldPlay }) {
   console.log("[MemoYouTube] 렌더링, videoId:", videoId, "shouldPlay:", shouldPlay);
   if (!videoId) return null;
   return (
     <YouTube
-      key={audioUrl}
       videoId={videoId}
       opts={{
         width: "0",
@@ -47,12 +46,162 @@ const MemoYouTube = memo(function MemoYouTube({ videoId, start, onReady, onState
   );
 });
 
+// 게임 설정 컴포넌트
+function GameConfig({ onConfigSet }) {
+  const [songSets, setSongSets] = useState([]);
+  const [questionCounts, setQuestionCounts] = useState([]);
+  const [selectedSet, setSelectedSet] = useState('');
+  const [selectedCount, setSelectedCount] = useState(10);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    // 임시로 하드코딩된 데이터 사용 (API 호출 대신)
+    const mockSongSets = [
+      { id: '2010s-idols', name: '2010년대 아이돌', songCount: 60 }
+    ];
+    const mockQuestionCounts = [5, 10, 30, 50];
+    
+    setSongSets(mockSongSets);
+    setQuestionCounts(mockQuestionCounts);
+    if (mockSongSets.length > 0) {
+      setSelectedSet(mockSongSets[0].id);
+    }
+    setLoading(false);
+  }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (selectedSet && selectedCount) {
+      onConfigSet(selectedSet, selectedCount);
+    }
+  };
+
+  if (error) {
+    return (
+      <div className="error-container">
+        <div className="error-message">{error}</div>
+        <button 
+          className="retry-button" 
+          onClick={() => window.location.reload()}
+        >
+          다시 시도
+        </button>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return <div className="loading">로딩 중...</div>;
+  }
+
+  return (
+    <div className="game-config">
+      <h3>게임 설정</h3>
+      <form onSubmit={handleSubmit}>
+        <div className="config-item">
+          <label>노래 세트:</label>
+          <select 
+            value={selectedSet} 
+            onChange={(e) => setSelectedSet(e.target.value)}
+            required
+          >
+            {songSets.map(set => (
+              <option key={set.id} value={set.id}>
+                {set.name} ({set.songCount}곡)
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        <div className="config-item">
+          <label>문제 수:</label>
+          <select 
+            value={selectedCount} 
+            onChange={(e) => setSelectedCount(parseInt(e.target.value))}
+            required
+          >
+            {questionCounts.map(count => (
+              <option key={count} value={count}>
+                {count}문제
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        <button type="submit" className="config-submit">
+          게임 시작
+        </button>
+      </form>
+    </div>
+  );
+}
+
+// 대기 메시지 컴포넌트
+function WaitingMessage() {
+  return (
+    <div className="waiting-message">
+      <div className="waiting-icon">⏳</div>
+      <div className="waiting-text">방장이 게임 규칙을 정하고 있습니다...</div>
+    </div>
+  );
+}
+
 export default function Game() {
   const { state } = useAppContext();
-  const { socket, gameState, players } = state;
+  const { socket, gameState, players, isHost } = state;
   const [answer, setAnswer] = useState("");
   const [youtubePlayer, setYoutubePlayer] = useState(null);
   const [shouldPlay, setShouldPlay] = useState(false);
+  const [gamePhase, setGamePhase] = useState('waiting'); // waiting, config, playing
+  const [currentVideoId, setCurrentVideoId] = useState(null);
+  const [currentStartTime, setCurrentStartTime] = useState(null);
+
+  // 방장이 처음 들어왔을 때 설정 화면 보여주기
+  useEffect(() => {
+    console.log("[Game] useEffect - isHost:", isHost, "gameState:", gameState);
+    if (isHost && !gameState) {
+      console.log("[Game] 방장이고 gameState가 없음 - config 화면으로 설정");
+      setGamePhase('config');
+    }
+  }, [isHost, gameState]);
+
+  // 소켓 메시지 처리
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleMessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log("[Game] 소켓 메시지 수신:", data.type);
+      
+      switch (data.type) {
+        case 'game_config_set':
+          setGamePhase('waiting');
+          break;
+        case 'server_game_state':
+          if (data.payload.phase === 'playing') {
+            setGamePhase('playing');
+            setShouldPlay(true);
+            // 새로운 곡이 시작될 때 비디오 ID와 시작 시간 확인
+            const newVideoId = data.payload.song?.videoId;
+            const newStartTime = data.payload.song?.startTime;
+            
+            // 비디오 ID나 시작 시간이 다르면 새로운 곡
+            if (newVideoId !== currentVideoId || newStartTime !== currentStartTime) {
+              console.log("[Game] 새로운 곡 감지:", newVideoId, newStartTime);
+              setCurrentVideoId(newVideoId);
+              setCurrentStartTime(newStartTime);
+              setShouldPlay(false); // 재생 상태 초기화
+              setTimeout(() => setShouldPlay(true), 100); // 약간의 지연 후 재생
+            }
+          }
+          break;
+      }
+    };
+
+    socket.addEventListener('message', handleMessage);
+    return () => socket.removeEventListener('message', handleMessage);
+  }, [socket, currentVideoId, currentStartTime]);
 
   // 서버 게임 상태 처리
   useEffect(() => {
@@ -61,6 +210,26 @@ export default function Game() {
       setShouldPlay(true);
     }
   }, [gameState?.phase, shouldPlay]);
+
+  const handleConfigSet = (setId, questionCount) => {
+    console.log("[Game] 게임 설정 전송:", setId, questionCount);
+    if (socket) {
+      // 1. 게임 설정 전송
+      socket.send(JSON.stringify({
+        type: 'set_game_config',
+        payload: { setId, questionCount }
+      }));
+      
+      // 2. 잠시 후 게임 시작 준비
+      setTimeout(() => {
+        console.log("[Game] 게임 시작 준비 전송");
+        socket.send(JSON.stringify({
+          type: 'prepare_game',
+          payload: {}
+        }));
+      }, 1000);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -107,22 +276,47 @@ export default function Game() {
     }
   }, [shouldPlay, youtubePlayer]);
 
-  console.log("[Game] 렌더링, gameState:", gameState, "shouldPlay:", shouldPlay);
+  console.log("[Game] 렌더링 - gamePhase:", gamePhase, "isHost:", isHost, "gameState:", gameState);
 
+  // 게임 설정 화면 (방장만)
+  if (gamePhase === 'config' && isHost) {
+    console.log("[Game] 게임 설정 화면 렌더링");
+    return (
+      <div className="game-container">
+        <GameConfig onConfigSet={handleConfigSet} />
+        <PlayerList players={players} />
+      </div>
+    );
+  }
+
+  // 대기 화면 (방장이 설정 중일 때)
+  if (gamePhase === 'waiting' && !isHost) {
+    console.log("[Game] 대기 화면 렌더링");
+    return (
+      <div className="game-container">
+        <WaitingMessage />
+        <PlayerList players={players} />
+      </div>
+    );
+  }
+
+  // 게임 플레이 화면
+  console.log("[Game] 게임 플레이 화면 렌더링");
   return (
     <div className="game-container">
       <h2>문제 {gameState?.index || 1}</h2>
       {videoId && (
         <MemoYouTube 
+          key={`${videoId}-${start}`}
           videoId={videoId} 
           start={start} 
           onReady={handleReady} 
           onStateChange={handleStateChange} 
-          audioUrl={audioUrl}
           shouldPlay={shouldPlay}
         />
       )}
       {shouldPlay && <div className="playing-indicator">🎵 재생 중...</div>}
+      
       <form onSubmit={handleSubmit} className="answer-form">
         <input
           type="text"
@@ -135,7 +329,7 @@ export default function Game() {
           정답 제출
         </button>
       </form>
-      <div className="timer">남은 시간: {gameState?.timeRemaining || 60}초</div>
+      <div className="timer">남은 시간: {gameState?.timeRemaining || 20}초</div>
       {gameState?.phase === 'hint' && <div className="hint">가수 힌트: {gameState?.song?.artist}</div>}
       {gameState?.phase === 'reveal' && <div className="reveal">정답: {gameState?.song?.title}</div>}
       {gameState?.phase === 'correct' && (

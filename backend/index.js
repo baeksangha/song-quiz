@@ -5,7 +5,7 @@ const WebSocket = require('ws');
 const path = require('path');
 const fs = require('fs');
 const RoomManager = require('./roomManager');
-const songs = require('./songs');
+const { getAvailableSets, getQuestionCountOptions } = require('./songs');
 
 const app = express();
 app.use(cors({
@@ -18,6 +18,16 @@ app.use('/audio', express.static(path.join(__dirname, 'public/audio')));
 
 app.get('/health', (req, res) => {
   res.send('OK');
+});
+
+// 사용 가능한 노래 세트 목록 API
+app.get('/api/song-sets', (req, res) => {
+  res.json({ sets: getAvailableSets() });
+});
+
+// 사용 가능한 문제 수 옵션 API
+app.get('/api/question-counts', (req, res) => {
+  res.json({ counts: getQuestionCountOptions() });
 });
 
 // 오디오 스트리밍 엔드포인트
@@ -152,7 +162,38 @@ wss.on('connection', (ws) => {
       broadcastToRoom(roomCode, { type: 'update_players', payload: { players: roomManager.getPlayers(roomCode) } });
     }
 
-    // 게임 시작 (방장만 가능)
+    // 게임 설정 (방장만 가능)
+    else if (type === 'set_game_config') {
+      const roomCode = ws.roomCode;
+      const room = roomManager.getRoom(roomCode);
+      if (!room || room.hostId !== ws._socket.remotePort) return;
+      
+      const { setId, questionCount } = payload;
+      const success = roomManager.setGameConfig(roomCode, setId, questionCount);
+      
+      if (success) {
+        // 다른 플레이어들에게 방장이 게임 규칙을 정하고 있다는 메시지 전송
+        broadcastToRoom(roomCode, { 
+          type: 'game_config_set', 
+          payload: { setId, questionCount } 
+        });
+      }
+    }
+
+    // 게임 시작 준비 (방장만 가능)
+    else if (type === 'prepare_game') {
+      const roomCode = ws.roomCode;
+      const room = roomManager.getRoom(roomCode);
+      if (!room || room.hostId !== ws._socket.remotePort) return;
+      
+      const success = roomManager.prepareGame(roomCode);
+      if (success) {
+        // 카운트다운 시작
+        startCountdown(roomCode);
+      }
+    }
+
+    // 게임 시작 (방장만 가능) - 이제 직접 호출되지 않음
     else if (type === 'start_game') {
       const roomCode = ws.roomCode;
       const room = roomManager.getRoom(roomCode);
@@ -205,10 +246,11 @@ wss.on('connection', (ws) => {
           }
         });
         
-        // 다음 곡으로 이동
+        // 바로 다음 곡으로 이동
         setTimeout(() => {
           game.nextSong();
-          if (game.currentSongIndex < songs.length) {
+          const gameState = game.getGameState();
+          if (gameState.phase !== 'finished') {
             startSong(roomCode);
           } else {
             endGame(roomCode);
@@ -246,6 +288,16 @@ wss.on('connection', (ws) => {
   });
 });
 
+// 카운트다운 시작
+function startCountdown(roomCode) {
+  const room = roomManager.getRoom(roomCode);
+  if (!room) return;
+
+  // 카운트다운 없이 바로 게임 시작
+  roomManager.startGame(roomCode);
+  startSong(roomCode);
+}
+
 // 서버 중심 게임 상태 관리
 function updateRoomGameState(roomCode, gameState) {
   roomGameStates[roomCode] = {
@@ -263,6 +315,11 @@ function startSong(roomCode) {
   if (!room) return;
   const game = room.game;
   const song = game.getCurrentSong();
+  if (!song) {
+    endGame(roomCode);
+    return;
+  }
+  
   game.isAnswering = false;
   game.hintGiven = false;
 
@@ -282,7 +339,7 @@ function startSong(roomCode) {
     },
     index: game.currentSongIndex + 1,
     serverStartTime: Date.now(), // 서버 시간 기준
-    timeRemaining: 60, // 남은 시간 (초)
+    timeRemaining: 20, // 남은 시간 (초) - 20초로 변경
     hintGiven: false,
     isAnswering: false
   };
@@ -306,7 +363,7 @@ function startServerTimer(roomCode) {
   if (!room) return;
 
   const game = room.game;
-  let timeRemaining = 60;
+  let timeRemaining = 20; // 20초로 변경
 
   const timer = setInterval(() => {
     timeRemaining--;
@@ -316,8 +373,8 @@ function startServerTimer(roomCode) {
     if (currentState) {
       currentState.timeRemaining = timeRemaining;
       
-      // 힌트 시간 (10초)
-      if (timeRemaining === 50 && !currentState.hintGiven) {
+      // 힌트 시간 (10초) - 20초 중 10초 남았을 때
+      if (timeRemaining === 10 && !currentState.hintGiven) {
         currentState.phase = 'hint';
         currentState.hintGiven = true;
         broadcastToRoom(roomCode, { 
@@ -334,10 +391,11 @@ function startServerTimer(roomCode) {
           payload: currentState 
         });
         
-        // 다음 곡으로 이동
+        // 바로 다음 곡으로 이동
         setTimeout(() => {
           game.nextSong();
-          if (game.currentSongIndex < songs.length) {
+          const gameState = game.getGameState();
+          if (gameState.phase !== 'finished') {
             startSong(roomCode);
           } else {
             endGame(roomCode);

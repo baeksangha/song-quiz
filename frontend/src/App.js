@@ -12,6 +12,8 @@ function MainRouter() {
   const { state, dispatch } = useAppContext();
   useSocket(dispatch);
 
+  console.log("[MainRouter] 현재 페이지:", state.page, "전체 상태:", state);
+
   if (state.page === "room") return <RoomForm />;
   if (state.page === "lobby") return <Lobby />;
   if (state.page === "game") return <Game />;

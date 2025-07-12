@@ -49,7 +49,7 @@ export default function Result() {
         JSON.stringify({ type: "leave_room", payload: { roomCode: state.roomCode } })
       );
     }
-    dispatch({ type: "SET_PAGE", page: "room" });
+    dispatch({ type: "SET_PAGE", payload: "room" });
   };
 
   const displayPlayers = localPlayers.length > 0 ? localPlayers : players;

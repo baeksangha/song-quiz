@@ -50,7 +50,7 @@ export default function useSocket(dispatch) {
           console.log("게임 종료:", payload);
           stableDispatch({ type: "SET_PLAYERS", players: payload.players });
           stableDispatch({ type: "SET_WINNERS", winners: payload.winners });
-          stableDispatch({ type: "SET_PAGE", page: "result" });
+          stableDispatch({ type: "SET_PAGE", payload: "result" });
       }
     };
 
