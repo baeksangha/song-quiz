@@ -64,12 +64,12 @@ class RoomManager {
   }
 
   // 게임 설정 (방장만 호출 가능)
-  setGameConfig(roomCode, setId, questionCount) {
+  setGameConfig(roomCode, setId, questionCount, time = 20) {
     const room = this.rooms[roomCode];
     if (!room) return false;
     
     try {
-      room.game.setGameConfig(setId, questionCount);
+      room.game.setGameConfig(setId, questionCount, time);
       return true;
     } catch (error) {
       console.error('게임 설정 실패:', error);

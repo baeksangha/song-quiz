@@ -50,20 +50,26 @@ const MemoYouTube = memo(function MemoYouTube({ videoId, start, onReady, onState
 function GameConfig({ onConfigSet }) {
   const [songSets, setSongSets] = useState([]);
   const [questionCounts, setQuestionCounts] = useState([]);
+  const [timeOptions, setTimeOptions] = useState([]);
   const [selectedSet, setSelectedSet] = useState('');
   const [selectedCount, setSelectedCount] = useState(10);
+  const [selectedTime, setSelectedTime] = useState(20);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     // 임시로 하드코딩된 데이터 사용 (API 호출 대신)
     const mockSongSets = [
-      { id: '2010s-idols', name: '2010년대 아이돌', songCount: 60 }
+      { id: '2010s-idols', name: '2010년대 아이돌', songCount: 60 },
+      { id: '1990s-dance', name: '90년대 중후반 댄스곡 모음', songCount: 50 },
+      { id: '2020s-idols', name: '2020년대 아이돌음악', songCount: 53 }
     ];
     const mockQuestionCounts = [5, 10, 30, 50];
+    const mockTimeOptions = [20, 40, 60];
     
     setSongSets(mockSongSets);
     setQuestionCounts(mockQuestionCounts);
+    setTimeOptions(mockTimeOptions);
     if (mockSongSets.length > 0) {
       setSelectedSet(mockSongSets[0].id);
     }
@@ -72,8 +78,8 @@ function GameConfig({ onConfigSet }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (selectedSet && selectedCount) {
-      onConfigSet(selectedSet, selectedCount);
+    if (selectedSet && selectedCount && selectedTime) {
+      onConfigSet(selectedSet, selectedCount, selectedTime);
     }
   };
 
@@ -124,6 +130,21 @@ function GameConfig({ onConfigSet }) {
             {questionCounts.map(count => (
               <option key={count} value={count}>
                 {count}문제
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        <div className="config-item">
+          <label>제한 시간:</label>
+          <select 
+            value={selectedTime} 
+            onChange={(e) => setSelectedTime(parseInt(e.target.value))}
+            required
+          >
+            {timeOptions.map(time => (
+              <option key={time} value={time}>
+                {time}초
               </option>
             ))}
           </select>
@@ -211,13 +232,13 @@ export default function Game() {
     }
   }, [gameState?.phase, shouldPlay]);
 
-  const handleConfigSet = (setId, questionCount) => {
-    console.log("[Game] 게임 설정 전송:", setId, questionCount);
+  const handleConfigSet = (setId, questionCount, time) => {
+    console.log("[Game] 게임 설정 전송:", setId, questionCount, time);
     if (socket) {
       // 1. 게임 설정 전송
       socket.send(JSON.stringify({
         type: 'set_game_config',
-        payload: { setId, questionCount }
+        payload: { setId, questionCount, time }
       }));
       
       // 2. 잠시 후 게임 시작 준비
@@ -329,7 +350,7 @@ export default function Game() {
           정답 제출
         </button>
       </form>
-      <div className="timer">남은 시간: {gameState?.timeRemaining || 20}초</div>
+      <div className="timer">남은 시간: {gameState?.timeRemaining || gameState?.timeLimit || 20}초</div>
       {gameState?.phase === 'hint' && <div className="hint">가수 힌트: {gameState?.song?.artist}</div>}
       {gameState?.phase === 'reveal' && <div className="reveal">정답: {gameState?.song?.title}</div>}
       {gameState?.phase === 'correct' && (
