@@ -264,12 +264,7 @@ class GameManager {
       if (userAnswer === korean && correctTitle === english) return true;
     }
     
-    // 4. 부분 일치 (띄어쓰기 제거 후)
-    if (userAnswerNoSpace.includes(correctTitleNoSpace) || correctTitleNoSpace.includes(userAnswerNoSpace)) {
-      return true;
-    }
-    
-    // 5. 특수문자 제거 후 비교
+    // 4. 특수문자 제거 후 비교
     const userAnswerClean = userAnswer.replace(/[^\w\s가-힣]/g, '');
     const correctTitleClean = correctTitle.replace(/[^\w\s가-힣]/g, '');
     if (userAnswerClean === correctTitleClean) return true;
