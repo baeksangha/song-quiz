@@ -1,254 +1,179 @@
 // 2000년대 히트곡 모음
 const songs2000sHits = [
   {
-    title: "Gee",
-    artist: "소녀시대",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=0"
+    title: "Again & Again",
+    artist: "2PM",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=0"
+  },
+  {
+    title: "빙고 (아싸)",
+    artist: "거북이",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=243"
+  },
+  {
+    title: "새",
+    artist: "싸이",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=435"
+  },
+  {
+    title: "Love Is...",
+    artist: "터보",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=627"
+  },
+  {
+    title: "Lie",
+    artist: "가비NG",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=880"
+  },
+  {
+    title: "Chu",
+    artist: "에프엑스 (f(x))",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=1098"
   },
   {
     title: "거짓말",
-    artist: "BIGBANG",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=199"
+    artist: "빅뱅",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=1292"
   },
   {
-    title: "Fire",
-    artist: "2NE1",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=427"
+    title: "여름안에서",
+    artist: "서연",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=1518"
   },
   {
-    title: "Lollipop",
-    artist: "빅뱅 & 2NE1",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=649"
+    title: "Maria",
+    artist: "김아중",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=1727"
   },
   {
-    title: "Nobody",
-    artist: "원더걸스",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=837"
+    title: "다짐",
+    artist: "조성모",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=1915"
   },
   {
-    title: "So Hot",
-    artist: "원더걸스",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=1048"
+    title: "Kiss",
+    artist: "산다라 박",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=2154"
   },
   {
-    title: "Bo Peep Bo Peep",
-    artist: "티아라",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=1228"
+    title: "파란",
+    artist: "코요태",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=2367"
   },
   {
-    title: "Roly-Poly",
-    artist: "티아라",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=1452"
+    title: "D.I.S.C.O.",
+    artist: "엄정화, T.O.P.",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=2596"
   },
   {
-    title: "U-Go-Girl (With. 낯선)",
-    artist: "이효리",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=1665"
+    title: "단칼",
+    artist: "김현정",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=2800"
   },
   {
-    title: "Abracadabra",
-    artist: "브라운아이드걸스",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=1853"
-  },
-  {
-    title: "My Style (Hidden Track)",
-    artist: "브라운아이드걸스",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=2035"
-  },
-  {
-    title: "누난 너무 예뻐 (Replay)",
-    artist: "SHINee",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=2273"
-  },
-  {
-    title: "8282",
-    artist: "다비치",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=2486"
-  },
-  {
-    title: "사랑스러워",
-    artist: "김종국",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=2703"
-  },
-  {
-    title: "Hug (포옹)",
+    title: "믿어요",
     artist: "동방신기",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=2968"
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=3020"
   },
   {
-    title: "Snow Prince",
-    artist: "SS501",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=3195"
+    title: "친구여",
+    artist: "조PD, 인순이",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=3312"
   },
   {
-    title: "Must Have Love",
-    artist: "SG워너비 & 브라운아이드걸스",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=3397"
+    title: "내 귀에 캔디",
+    artist: "백지영",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=3570"
   },
   {
-    title: "Love Song",
-    artist: "7공주",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=3653"
+    title: "애송이",
+    artist: "렉시",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=3796"
   },
   {
-    title: "냉면",
-    artist: "명카드라이브",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=3882"
+    title: "You And I",
+    artist: "박봄",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=4029"
   },
   {
-    title: "I Don't Care",
-    artist: "2NE1",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=4099"
+    title: "No.1",
+    artist: "보아",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=4262"
   },
   {
-    title: "Bad Girl Good Girl",
-    artist: "miss A",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=4337"
+    title: "사랑의 인사",
+    artist: "씨야",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=4456"
   },
   {
-    title: "Chu~♡",
-    artist: "f(x)",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=4552"
+    title: "아브라카다브라",
+    artist: "브라운아이드걸스",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=4731"
   },
   {
-    title: "10점 만점에 10점",
-    artist: "2PM",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=4742"
-  },
-  {
-    title: "Hot Issue",
-    artist: "4minute",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=4943"
-  },
-  {
-    title: "미스터",
-    artist: "카라",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=5150"
-  },
-  {
-    title: "Diva",
-    artist: "애프터스쿨",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=5341"
-  },
-  {
-    title: "만만하니",
-    artist: "유키스",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=5539"
-  },
-  {
-    title: "삐리빠빠",
-    artist: "나르샤",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=5750"
-  },
-  {
-    title: "삐리뽐 빼리뽐",
-    artist: "남녀공학",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=5956"
-  },
-  {
-    title: "Brand New",
-    artist: "신화",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=6144"
-  },
-  {
-    title: "Rainism (Clean Ver.)",
+    title: "Love Story (0912...그 이후)",
     artist: "비",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=6370"
-  },
-  {
-    title: "토요일밤에",
-    artist: "손담비",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=6585"
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=4913"
   },
   {
     title: "유혹의 소나타",
     artist: "아이비",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=6806"
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=5156"
   },
   {
-    title: "내 귀에 캔디 (Feat. 택연 Of 2PM)",
-    artist: "백지영",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=7010"
+    title: "열정",
+    artist: "세븐",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=5361"
+  },
+  {
+    title: "미스터",
+    artist: "카라",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=5562"
+  },
+  {
+    title: "10 Minutes",
+    artist: "이효리",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=5753"
+  },
+  {
+    title: "쏘리쏘리 (Sorry Sorry)",
+    artist: "슈퍼주니어",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=5989"
+  },
+  {
+    title: "신데렐라",
+    artist: "서인영",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=6220"
+  },
+  {
+    title: "오빠",
+    artist: "왁스",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=6416"
   },
   {
     title: "One More Time",
     artist: "쥬얼리",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=7233"
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=6625"
   },
   {
-    title: "낭만 고양이",
-    artist: "체리필터",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=7434"
+    title: "Gee",
+    artist: "소녀시대",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=6829"
   },
   {
-    title: "나에게로 떠나는 여행",
-    artist: "버즈",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=7657"
+    title: "토요일밤에",
+    artist: "손담비",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=7031"
   },
   {
-    title: "비행기",
-    artist: "거북이",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=7863"
+    title: "Nobody",
+    artist: "원더걸스",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=7254"
   },
   {
-    title: "마쉬멜로우",
-    artist: "아이유",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=8075"
-  },
-  {
-    title: "기억을 걷는 시간",
-    artist: "넬",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=8268"
-  },
-  {
-    title: "사랑했나봐",
-    artist: "윤도현",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=8578"
-  },
-  {
-    title: "친구여 (Feat 인순이)",
-    artist: "조pd",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=8811"
-  },
-  {
-    title: "사랑인걸",
-    artist: "모세",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=9068"
-  },
-  {
-    title: "내 여자라니까",
-    artist: "이승기",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=9321"
-  },
-  {
-    title: "사랑앓이",
-    artist: "FTISLAND",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=9566"
-  },
-  {
-    title: "친구의 고백",
-    artist: "2AM",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=9808"
-  },
-  {
-    title: "점점",
-    artist: "브라운 아이즈",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=10065"
-  },
-  {
-    title: "사랑..그게 뭔데",
-    artist: "양파",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=10276"
-  },
-  {
-    title: "총맞은것처럼",
-    artist: "백지영",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=10514"
-  },
-  {
-    title: "바람만바람만",
-    artist: "김종국 & SG워너비",
-    audioUrl: "https://youtu.be/U7mPqycQ0tQ?t=10752"
+    title: "둘이서",
+    artist: "채연",
+    audioUrl: "https://youtu.be/AkfzyGkihqY?t=7469"
   }
 ];
 

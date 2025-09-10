@@ -58,22 +58,43 @@ function GameConfig({ onConfigSet }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // 임시로 하드코딩된 데이터 사용 (API 호출 대신)
-    const mockSongSets = [
-      { id: '2010s-idols', name: '2010년대 아이돌', songCount: 60 },
-      { id: '1990s-dance', name: '90년대 중후반 댄스곡 모음', songCount: 50 },
-      { id: '2020s-idols', name: '2020년대 아이돌음악', songCount: 53 }
-    ];
-    const mockQuestionCounts = [5, 10, 30, 50];
-    const mockTimeOptions = [20, 40, 60];
-    
-    setSongSets(mockSongSets);
-    setQuestionCounts(mockQuestionCounts);
-    setTimeOptions(mockTimeOptions);
-    if (mockSongSets.length > 0) {
-      setSelectedSet(mockSongSets[0].id);
-    }
-    setLoading(false);
+    // API에서 실제 데이터 가져오기
+    const loadGameOptions = async () => {
+      try {
+        const [setsResponse, countsResponse, timeResponse] = await Promise.all([
+          fetch('http://localhost:4000/api/song-sets'),
+          fetch('http://localhost:4000/api/question-counts'),
+          fetch('http://localhost:4000/api/time-options')
+        ]);
+
+        if (!setsResponse.ok || !countsResponse.ok || !timeResponse.ok) {
+          throw new Error('API 호출 실패');
+        }
+
+        const setsData = await setsResponse.json();
+        const countsData = await countsResponse.json();
+        const timeData = await timeResponse.json();
+
+        setSongSets(setsData.sets || []);
+        setQuestionCounts(countsData.counts || []);
+        setTimeOptions(timeData.times || []);
+        
+        if (setsData.sets.length > 0) {
+          setSelectedSet(setsData.sets[0].id);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error('게임 옵션 로딩 실패:', error);
+        // 에러 발생 시 기본값으로 설정
+        setSongSets([]);
+        setQuestionCounts([5, 10, 30, 50]);
+        setTimeOptions([20, 40, 60]);
+        setError('게임 설정을 불러오는데 실패했습니다.');
+        setLoading(false);
+      }
+    };
+
+    loadGameOptions();
   }, []);
 
   const handleSubmit = (e) => {
@@ -232,6 +253,7 @@ export default function Game() {
     }
   }, [gameState?.phase, shouldPlay]);
 
+
   const handleConfigSet = (setId, questionCount, time) => {
     console.log("[Game] 게임 설정 전송:", setId, questionCount, time);
     if (socket) {
@@ -251,6 +273,7 @@ export default function Game() {
       }, 1000);
     }
   };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
