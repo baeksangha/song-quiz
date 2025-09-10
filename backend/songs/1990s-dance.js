@@ -61,7 +61,7 @@ const songs1990sDance = [
     audioUrl: "https://youtu.be/PFMrjdJTWxA?t=2488"
   },
   {
-    title: "마지막 배려",
+    title: "마지막배려",
     artist: "임성은",
     audioUrl: "https://youtu.be/PFMrjdJTWxA?t=2710"
   },
