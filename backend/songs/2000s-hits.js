@@ -1,5 +1,5 @@
 // 2000년대 히트곡 모음
-const songs = [
+const songs2000sHits = [
   {
     title: "Gee",
     artist: "소녀시대",
@@ -252,4 +252,4 @@ const songs = [
   }
 ];
 
-module.exports = songs; 
+module.exports = songs2000sHits; 
